@@ -1,0 +1,39 @@
+# Binaries
+/bin/
+/build/
+/dist/
+/*.exe
+/*.dll
+/*.so
+/*.dylib
+
+# Compiled object files
+*.o
+*.a
+*.out
+
+# Go build cache
+/tmp/
+*.test
+*.log
+
+# Go vendor directory
+/vendor/
+
+# IDE/editor configs
+.vscode/
+.idea/
+*.swp
+
+# Environment files
+.env
+
+# Dependency management
+go.sum
+
+# Migrations (se geradas automaticamente)
+migrations/*.tmp
+
+# OS generated files
+.DS_Store
+Thumbs.db
