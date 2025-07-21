@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"ezTest/internal/handlers"
+	"TestGO/internal/handlers"
 	"net/http"
 )
 

@@ -1,12 +1,12 @@
 package handlers
 
 import (
+	"TestGO/internal/dto"
+	"TestGO/internal/repositories"
+	"TestGO/internal/services"
+	"TestGO/internal/utils"
 	"context"
 	"encoding/json"
-	"ezTest/internal/dto"
-	"ezTest/internal/repositories"
-	"ezTest/internal/services"
-	"ezTest/internal/utils"
 	"net/http"
 )
 

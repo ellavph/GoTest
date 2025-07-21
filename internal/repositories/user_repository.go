@@ -1,10 +1,10 @@
 package repositories
 
 import (
+	"TestGO/configs"
+	"TestGO/internal/models"
 	"context"
 	"errors"
-	"ezTest/configs"
-	"ezTest/internal/models"
 )
 
 func GetUserByEmail(ctx context.Context, email string) (*models.User, error) {
