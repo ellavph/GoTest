@@ -161,7 +161,5 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 // @Failure 501 {object} map[string]interface{} "Funcionalidade não implementada"
 // @Router /auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {
-	// RefreshToken não está implementado na interface atual
-	// Pode ser implementado como um caso de uso específico se necessário
 	c.JSON(http.StatusNotImplemented, gin.H{"error": "Refresh token not implemented"})
 }
