@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"TestGO/internal/interfaces/services"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"TestGO/internal/interfaces/services"
 )
 
 type CompanyHandler struct {
