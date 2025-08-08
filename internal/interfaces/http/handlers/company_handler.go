@@ -36,6 +36,18 @@ type UpdateCompanyRequest struct {
 	Address string `json:"address" validate:"omitempty,max=255"`
 }
 
+// Create godoc
+// @Summary Criar nova empresa
+// @Description Cria uma nova empresa no sistema
+// @Tags companies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body CreateCompanyRequest true "Dados da empresa"
+// @Success 201 {object} map[string]interface{} "Empresa criada com sucesso"
+// @Failure 400 {object} map[string]interface{} "Dados inválidos"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /companies [post]
 func (h *CompanyHandler) Create(c *gin.Context) {
 	var req CreateCompanyRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -73,6 +85,18 @@ func (h *CompanyHandler) Create(c *gin.Context) {
 	})
 }
 
+// GetByID godoc
+// @Summary Obter empresa por ID
+// @Description Retorna os dados de uma empresa específica pelo ID
+// @Tags companies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da empresa"
+// @Success 200 {object} map[string]interface{} "Dados da empresa"
+// @Failure 400 {object} map[string]interface{} "ID inválido"
+// @Failure 404 {object} map[string]interface{} "Empresa não encontrada"
+// @Router /companies/{id} [get]
 func (h *CompanyHandler) GetByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -98,6 +122,19 @@ func (h *CompanyHandler) GetByID(c *gin.Context) {
 	})
 }
 
+// Update godoc
+// @Summary Atualizar empresa
+// @Description Atualiza os dados de uma empresa existente
+// @Tags companies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da empresa"
+// @Param request body UpdateCompanyRequest true "Dados para atualização"
+// @Success 200 {object} map[string]interface{} "Empresa atualizada com sucesso"
+// @Failure 400 {object} map[string]interface{} "Dados inválidos"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /companies/{id} [put]
 func (h *CompanyHandler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -142,6 +179,18 @@ func (h *CompanyHandler) Update(c *gin.Context) {
 	})
 }
 
+// Delete godoc
+// @Summary Deletar empresa
+// @Description Remove uma empresa do sistema
+// @Tags companies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID da empresa"
+// @Success 200 {object} map[string]interface{} "Empresa deletada com sucesso"
+// @Failure 400 {object} map[string]interface{} "ID inválido"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /companies/{id} [delete]
 func (h *CompanyHandler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)
@@ -159,6 +208,18 @@ func (h *CompanyHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Company deleted successfully"})
 }
 
+// List godoc
+// @Summary Listar empresas
+// @Description Retorna uma lista paginada de empresas
+// @Tags companies
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param limit query int false "Limite de resultados" default(10)
+// @Param offset query int false "Offset para paginação" default(0)
+// @Success 200 {object} map[string]interface{} "Lista de empresas"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /companies [get]
 func (h *CompanyHandler) List(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "10")
 	offsetStr := c.DefaultQuery("offset", "0")

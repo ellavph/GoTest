@@ -4,10 +4,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"TestGO/internal/interfaces/services"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
-	"TestGO/internal/interfaces/services"
 )
 
 type UserHandler struct {
@@ -33,6 +34,18 @@ type ChangePasswordRequest struct {
 	NewPassword     string `json:"new_password" validate:"required,min=6"`
 }
 
+// GetProfile godoc
+// @Summary Obter perfil do usuário
+// @Description Retorna os dados do perfil do usuário autenticado
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Perfil do usuário"
+// @Failure 401 {object} map[string]interface{} "Usuário não autenticado"
+// @Failure 404 {object} map[string]interface{} "Usuário não encontrado"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users/profile [get]
 func (h *UserHandler) GetProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -61,6 +74,19 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 	})
 }
 
+// UpdateProfile godoc
+// @Summary Atualizar perfil do usuário
+// @Description Atualiza os dados do perfil do usuário autenticado
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body UpdateProfileRequest true "Dados para atualização"
+// @Success 200 {object} map[string]interface{} "Perfil atualizado com sucesso"
+// @Failure 400 {object} map[string]interface{} "Dados inválidos"
+// @Failure 401 {object} map[string]interface{} "Usuário não autenticado"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users/profile [put]
 func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -107,6 +133,17 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	})
 }
 
+// DeleteProfile godoc
+// @Summary Deletar perfil do usuário
+// @Description Remove a conta do usuário autenticado
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{} "Perfil deletado com sucesso"
+// @Failure 401 {object} map[string]interface{} "Usuário não autenticado"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users/profile [delete]
 func (h *UserHandler) DeleteProfile(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -129,6 +166,18 @@ func (h *UserHandler) DeleteProfile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Profile deleted successfully"})
 }
 
+// ChangePassword godoc
+// @Summary Alterar senha do usuário
+// @Description Altera a senha do usuário autenticado
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body ChangePasswordRequest true "Dados para alteração de senha"
+// @Success 200 {object} map[string]interface{} "Senha alterada com sucesso"
+// @Failure 400 {object} map[string]interface{} "Dados inválidos"
+// @Failure 401 {object} map[string]interface{} "Usuário não autenticado"
+// @Router /users/change-password [post]
 func (h *UserHandler) ChangePassword(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
@@ -167,6 +216,18 @@ func (h *UserHandler) ChangePassword(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Password changed successfully"})
 }
 
+// ListUsers godoc
+// @Summary Listar usuários
+// @Description Retorna uma lista paginada de usuários
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param limit query int false "Limite de resultados" default(10)
+// @Param offset query int false "Offset para paginação" default(0)
+// @Success 200 {object} map[string]interface{} "Lista de usuários"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users [get]
 func (h *UserHandler) ListUsers(c *gin.Context) {
 	limitStr := c.DefaultQuery("limit", "10")
 	offsetStr := c.DefaultQuery("offset", "0")
@@ -195,6 +256,18 @@ func (h *UserHandler) ListUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+// GetUserByID godoc
+// @Summary Obter usuário por ID
+// @Description Retorna os dados de um usuário específico pelo ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "ID do usuário"
+// @Success 200 {object} map[string]interface{} "Dados do usuário"
+// @Failure 400 {object} map[string]interface{} "ID inválido"
+// @Failure 404 {object} map[string]interface{} "Usuário não encontrado"
+// @Router /users/{id} [get]
 func (h *UserHandler) GetUserByID(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := uuid.Parse(idParam)

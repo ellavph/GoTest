@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"TestGO/internal/infrastructure/container"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SetupRoutes configura todas as rotas da aplicação
@@ -45,7 +46,7 @@ func SetupRoutes(router *gin.Engine, container *container.Container) {
 	// Rota de health check (pública)
 	router.GET("/api/v1/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"status": "ok",
+			"status":  "ok",
 			"message": "API is running",
 		})
 	})

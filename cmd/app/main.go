@@ -1,3 +1,23 @@
+// @title EzTest API
+// @version 1.0
+// @description API para gerenciamento de usuários e empresas com autenticação JWT
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8080
+// @BasePath /api
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Digite 'Bearer ' seguido do seu token JWT
+
 package main
 
 import (
@@ -10,11 +30,14 @@ import (
 	"time"
 
 	"TestGO/configs"
+	"TestGO/docs"
 	"TestGO/internal/infrastructure/container"
 	"TestGO/internal/interfaces/http/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	swaggerFiles "github.com/swaggo/files"
 )
 
 func main() {
@@ -45,12 +68,19 @@ func main() {
 	// Configurar CORS
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-	config.AllowHeaders = []string{"*"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"}
+	config.AllowHeaders = []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Accept", "X-Requested-With"}
+	config.AllowCredentials = true
+	config.ExposeHeaders = []string{"Content-Length", "Authorization"}
 	router.Use(cors.New(config))
 
 	// Configurar todas as rotas
 	routes.SetupRoutes(router, container)
+
+	// Configurar Swagger
+	docs.SwaggerInfo.Host = "localhost:8080"
+	docs.SwaggerInfo.BasePath = "/api"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Configurar servidor
 	srv := &http.Server{
