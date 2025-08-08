@@ -32,3 +32,13 @@ func RespondWithSuccess(w http.ResponseWriter, code int, descricao string, data 
 	}
 	json.NewEncoder(w).Encode(resp)
 }
+
+// SendErrorResponse envia uma resposta de erro
+func SendErrorResponse(w http.ResponseWriter, message string, statusCode int) {
+	RespondWithError(w, statusCode, message)
+}
+
+// SendSuccessResponse envia uma resposta de sucesso
+func SendSuccessResponse(w http.ResponseWriter, message string, data interface{}) {
+	RespondWithSuccess(w, http.StatusOK, message, data)
+}

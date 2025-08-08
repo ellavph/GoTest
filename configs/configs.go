@@ -6,25 +6,30 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/joho/godotenv" // Import the godotenv library
+	"github.com/joho/godotenv"
 )
 
 var Db *pgxpool.Pool
 
-func ConnectDB() error {
-	err := godotenv.Load()
-	if err != nil {
-		return errors.New("Erro ao carregar .env")
-	}
+// LoadEnv carrega as variáveis de ambiente
+func LoadEnv() error {
+	return godotenv.Load()
+}
 
+// ConnectDB conecta ao banco de dados e retorna o pool de conexões
+func ConnectDB(ctx context.Context) (*pgxpool.Pool, error) {
 	dbURL := os.Getenv("DATABASE_URL")
 	if dbURL == "" {
-		return errors.New("DATABASE_URL não definida")
+		return nil, errors.New("DATABASE_URL não definida")
 	}
-	pool, err := pgxpool.New(context.Background(), dbURL)
+	
+	pool, err := pgxpool.New(ctx, dbURL)
 	if err != nil {
-		return err
+		return nil, err
 	}
+	
+	// Manter compatibilidade com código existente
 	Db = pool
-	return nil
+	
+	return pool, nil
 }

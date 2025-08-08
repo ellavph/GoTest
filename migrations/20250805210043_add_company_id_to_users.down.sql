@@ -1,3 +1,0 @@
-ALTER TABLE users 
-DROP CONSTRAINT IF EXISTS fk_users_company,
-DROP COLUMN IF EXISTS company_id;

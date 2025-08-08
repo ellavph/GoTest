@@ -1,14 +1,13 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"os"
-	"path/filepath"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/joho/godotenv"
+	"github.com/pressly/goose/v3"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -22,21 +21,20 @@ func main() {
 		log.Fatal("DATABASE_URL não definido no .env")
 	}
 
-	cwd, err := os.Getwd()
+	// Conectar ao banco
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalf("Erro ao obter diretório atual: %v", err)
+		log.Fatalf("Erro ao conectar ao banco: %v", err)
+	}
+	defer db.Close()
+
+	// Definir o diretório de migrações
+	if err := goose.SetDialect("postgres"); err != nil {
+		log.Fatalf("Erro ao definir dialeto: %v", err)
 	}
 
-	migrationsPath := "file://" + filepath.ToSlash(filepath.Join(cwd, "migrations"))
-	m, err := migrate.New(
-		migrationsPath,
-		dbURL,
-	)
-	if err != nil {
-		log.Fatalf("Erro ao iniciar migrate: %v", err)
-	}
-
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	// Aplicar migrações
+	if err := goose.Up(db, "migrations"); err != nil {
 		log.Fatalf("Erro ao aplicar migrations: %v", err)
 	}
 
