@@ -36,8 +36,8 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -94,7 +94,7 @@ func main() {
 	// Iniciar servidor em goroutine
 	go func() {
 		log.Println("🚀 Server starting on port 8080...")
-		log.Println("📋 API Documentation available at: http://localhost:8080/api/v1/health")
+		log.Println("📋 API Documentation available at: http://localhost:8080/swagger/index.html")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("❌ Failed to start server: %v", err)
 		}
