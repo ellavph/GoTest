@@ -12,9 +12,15 @@ import (
 
 var Db *pgxpool.Pool
 
-// LoadEnv carrega as variáveis de ambiente
-func LoadEnv() error {
-	return godotenv.Load()
+// LoadEnv carrega as variáveis de ambiente do arquivo .env
+func LoadEnv() {
+	// Forçar o carregamento do arquivo .env, sobrescrevendo variáveis existentes
+	err := godotenv.Overload()
+	if err != nil {
+		log.Println("Aviso: Não foi possível carregar o arquivo .env:", err)
+	} else {
+		log.Println("Variáveis de ambiente carregadas do arquivo .env")
+	}
 }
 
 // ConnectDB conecta ao banco de dados e retorna o pool de conexões
