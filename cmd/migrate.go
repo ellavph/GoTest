@@ -1,13 +1,11 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"os"
+	"os/exec"
 
 	"github.com/joho/godotenv"
-	"github.com/pressly/goose/v3"
-	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -21,20 +19,12 @@ func main() {
 		log.Fatal("DATABASE_URL não definido no .env")
 	}
 
-	// Conectar ao banco
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		log.Fatalf("Erro ao conectar ao banco: %v", err)
-	}
-	defer db.Close()
-
-	// Definir o diretório de migrações
-	if err := goose.SetDialect("postgres"); err != nil {
-		log.Fatalf("Erro ao definir dialeto: %v", err)
-	}
-
-	// Aplicar migrações
-	if err := goose.Up(db, "migrations"); err != nil {
+	// Usar goose CLI diretamente que funciona melhor com Neon
+	cmd := exec.Command("goose", "-dir", "migrations", "postgres", dbURL, "up")
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	
+	if err := cmd.Run(); err != nil {
 		log.Fatalf("Erro ao aplicar migrations: %v", err)
 	}
 

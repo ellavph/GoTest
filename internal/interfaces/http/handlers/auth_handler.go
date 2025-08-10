@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -51,16 +52,22 @@ type RefreshTokenRequest struct {
 // @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
 // @Router /auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
+	log.Println("🔍 [DEBUG] Starting Register handler")
+	
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("❌ [ERROR] Failed to bind JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request format"})
 		return
 	}
+	log.Printf("✅ [DEBUG] Request parsed: username=%s, email=%s", req.Username, req.Email)
 
 	if err := h.validator.Struct(req); err != nil {
+		log.Printf("❌ [ERROR] Validation failed: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Println("✅ [DEBUG] Validation passed")
 
 	registerReq := &services.RegisterRequest{
 		Username: req.Username,
@@ -69,15 +76,18 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		Name:     req.Name,
 	}
 
+	log.Println("🔄 [DEBUG] Calling authService.Register...")
 	user, err := h.authService.Register(c.Request.Context(), registerReq)
 	if err != nil {
+		log.Printf("❌ [ERROR] AuthService.Register failed: %v", err)
 		if strings.Contains(err.Error(), "already exists") {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to register user", "details": err.Error()})
 		return
 	}
+	log.Printf("✅ [DEBUG] User created successfully: ID=%d", user.ID)
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "User registered successfully",
