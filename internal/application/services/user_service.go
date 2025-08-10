@@ -79,12 +79,8 @@ func (s *userService) Update(ctx context.Context, id uuid.UUID, req *services.Up
 	if req.Email != "" {
 		user.Email = req.Email
 	}
-	if req.Password != "" {
-		hashedPassword, err := s.passwordService.HashPassword(req.Password)
-		if err != nil {
-			return nil, fmt.Errorf("failed to hash password: %w", err)
-		}
-		user.Password = hashedPassword
+	if req.Name != "" {
+		user.Name = req.Name
 	}
 
 	// Salvar no banco
@@ -130,12 +126,26 @@ func (s *userService) List(ctx context.Context, req *services.ListUsersRequest) 
 		return nil, fmt.Errorf("failed to list users: %w", err)
 	}
 
+	// Converter entities.User para services.UserResponse
+	userResponses := make([]*services.UserResponse, len(users))
+	for i, user := range users {
+		userResponses[i] = &services.UserResponse{
+			ID:        user.ID,
+			Username:  user.Username,
+			Email:     user.Email,
+			Name:      user.Name,
+			CompanyID: user.CompanyID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		}
+	}
+
 	// Para simplicidade, vamos assumir um total fixo
 	// Em uma implementação real, você faria uma query COUNT
 	total := int64(len(users))
 
 	return &services.ListUsersResponse{
-		Users:  users,
+		Users:  userResponses,
 		Total:  total,
 		Limit:  req.Limit,
 		Offset: req.Offset,

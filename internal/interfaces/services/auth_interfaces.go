@@ -36,16 +36,9 @@ type LoginRequest struct {
 
 // LoginResponse representa a resposta de login
 type LoginResponse struct {
-	Token     string      `json:"token"`
-	User      UserSummary `json:"user"`
-	ExpiresAt int64       `json:"expires_at"`
-}
-
-// UserSummary representa um resumo do usuário para respostas
-type UserSummary struct {
-	ID       int64  `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	Token     string       `json:"token"`
+	User      UserResponse `json:"user"`
+	ExpiresAt int64        `json:"expires_at"`
 }
 
 // RegisterRequest representa uma solicitação de registro
@@ -58,7 +51,7 @@ type RegisterRequest struct {
 
 // RegisterResponse representa a resposta de registro
 type RegisterResponse struct {
-	ID       int64  `json:"id"`
-	Username string `json:"username"`
-	Email    string `json:"email"`
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
 }

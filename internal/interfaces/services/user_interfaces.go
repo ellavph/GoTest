@@ -4,8 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/google/uuid"
 	"TestGO/internal/domain/entities"
+
+	"github.com/google/uuid"
 )
 
 // UserReader define operações de leitura de usuários
@@ -37,7 +38,7 @@ type UserService interface {
 type UpdateUserRequest struct {
 	Username string `json:"username" validate:"omitempty,min=3,max=50"`
 	Email    string `json:"email" validate:"omitempty,email"`
-	Password string `json:"password" validate:"omitempty,min=6"`
+	Name     string `json:"name" validate:"omitempty,min=2,max=100"`
 }
 
 // ChangePasswordRequest representa uma solicitação de mudança de senha
@@ -54,18 +55,19 @@ type ListUsersRequest struct {
 
 // ListUsersResponse representa a resposta de listagem de usuários
 type ListUsersResponse struct {
-	Users  []*entities.User `json:"users"`
-	Total  int64            `json:"total"`
-	Limit  int              `json:"limit"`
-	Offset int              `json:"offset"`
+	Users  []*UserResponse `json:"users"`
+	Total  int64           `json:"total"`
+	Limit  int             `json:"limit"`
+	Offset int             `json:"offset"`
 }
 
 // UserResponse representa a resposta completa de usuário
 type UserResponse struct {
-	ID        int64     `json:"id"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	CompanyID *int64    `json:"company_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uuid.UUID  `json:"id"`
+	Username  string     `json:"username"`
+	Email     string     `json:"email"`
+	Name      string     `json:"name"`
+	CompanyID *uuid.UUID `json:"company_id"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
 }

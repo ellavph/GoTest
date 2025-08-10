@@ -26,7 +26,7 @@ func NewUserHandler(userService services.UserService) *UserHandler {
 type UpdateProfileRequest struct {
 	Username string `json:"username" validate:"omitempty,min=3,max=50"`
 	Email    string `json:"email" validate:"omitempty,email"`
-	Password string `json:"password" validate:"omitempty,min=6"`
+	Name     string `json:"name" validate:"omitempty,min=2,max=100"`
 }
 
 type ChangePasswordRequest struct {
@@ -114,7 +114,7 @@ func (h *UserHandler) UpdateProfile(c *gin.Context) {
 	updateReq := &services.UpdateUserRequest{
 		Username: req.Username,
 		Email:    req.Email,
-		Password: req.Password,
+		Name:     req.Name,
 	}
 
 	user, err := h.userService.Update(c.Request.Context(), id, updateReq)

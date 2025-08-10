@@ -41,6 +41,17 @@ func SetupRoutes(router *gin.Engine, container *container.Container) {
 			companyRoutes.DELETE("/:id", container.CompanyHandler.Delete)
 			companyRoutes.GET("", container.CompanyHandler.List)
 		}
+
+		// Rotas de test suite
+		testSuiteRoutes := api.Group("/test-suites")
+		{
+			testSuiteRoutes.POST("", container.TestSuiteHandler.Create)
+			testSuiteRoutes.GET("/:id", container.TestSuiteHandler.GetByID)
+			testSuiteRoutes.PUT("/:id", container.TestSuiteHandler.Update)
+			testSuiteRoutes.DELETE("/:id", container.TestSuiteHandler.Delete)
+			testSuiteRoutes.GET("", container.TestSuiteHandler.List)
+			testSuiteRoutes.GET("/company/:companyId", container.TestSuiteHandler.GetByCompanyID)
+		}
 	}
 
 	// Rota de health check (pública)

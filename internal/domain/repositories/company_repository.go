@@ -3,8 +3,9 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"TestGO/internal/domain/entities"
+
+	"github.com/google/uuid"
 )
 
 // CompanyRepository define as operações de persistência para empresas

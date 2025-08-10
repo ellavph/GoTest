@@ -16,22 +16,25 @@ import (
 // Container gerencia todas as dependências da aplicação
 type Container struct {
 	// Repositories
-	UserRepository    repositories.UserRepository
-	CompanyRepository repositories.CompanyRepository
+	UserRepository      repositories.UserRepository
+	CompanyRepository   repositories.CompanyRepository
+	TestSuiteRepository repositories.TestSuiteRepository
 
 	// Services
-	AuthService    interfaceServices.AuthService
-	UserService    interfaceServices.UserService
-	CompanyService interfaceServices.CompanyService
+	AuthService      interfaceServices.AuthService
+	UserService      interfaceServices.UserService
+	CompanyService   interfaceServices.CompanyService
+	TestSuiteService interfaceServices.TestSuiteService
 
 	// Infrastructure Services
 	PasswordService *security.PasswordService
 	JWTService      *security.JWTService
 
 	// Handlers
-	AuthHandler    *handlers.AuthHandler
-	UserHandler    *handlers.UserHandler
-	CompanyHandler *handlers.CompanyHandler
+	AuthHandler      *handlers.AuthHandler
+	UserHandler      *handlers.UserHandler
+	CompanyHandler   *handlers.CompanyHandler
+	TestSuiteHandler *handlers.TestSuiteHandler
 
 	// Middleware
 	AuthMiddleware *middleware.AuthMiddleware
@@ -50,38 +53,44 @@ func NewContainer(db *pgxpool.Pool, jwtSecret string) *Container {
 	// Repositories
 	userRepo := sqlRepo.NewUserRepository(db)
 	companyRepo := sqlRepo.NewCompanyRepository(db)
+	testSuiteRepo := sqlRepo.NewTestSuiteRepository(db)
 
 	// Application Services
 	authService := services.NewAuthService(userRepo, passwordService, jwtService)
 	userService := services.NewUserService(userRepo, passwordService)
 	companyService := services.NewCompanyService(companyRepo)
+	testSuiteService := services.NewTestSuiteService(testSuiteRepo)
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authService)
 	userHandler := handlers.NewUserHandler(userService)
 	companyHandler := handlers.NewCompanyHandler(companyService)
+	testSuiteHandler := handlers.NewTestSuiteHandler(testSuiteService)
 
 	// Middleware
 	authMiddleware := middleware.NewAuthMiddleware(authService)
 
 	return &Container{
 		// Repositories
-		UserRepository:    userRepo,
-		CompanyRepository: companyRepo,
+		UserRepository:      userRepo,
+		CompanyRepository:   companyRepo,
+		TestSuiteRepository: testSuiteRepo,
 
 		// Services
-		AuthService:    authService,
-		UserService:    userService,
-		CompanyService: companyService,
+		AuthService:      authService,
+		UserService:      userService,
+		CompanyService:   companyService,
+		TestSuiteService: testSuiteService,
 
 		// Infrastructure Services
 		PasswordService: passwordService,
 		JWTService:      jwtService,
 
 		// Handlers
-		AuthHandler:    authHandler,
-		UserHandler:    userHandler,
-		CompanyHandler: companyHandler,
+		AuthHandler:      authHandler,
+		UserHandler:      userHandler,
+		CompanyHandler:   companyHandler,
+		TestSuiteHandler: testSuiteHandler,
 
 		// Middleware
 		AuthMiddleware: authMiddleware,

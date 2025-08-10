@@ -1,5 +1,44 @@
 basePath: /api
 definitions:
+  entities.TestSuite:
+    properties:
+      company_id:
+        example: 550e8400-e29b-41d4-a716-446655440001
+        type: string
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      expected_body:
+        example: '{"success": true}'
+        type: string
+      expected_status:
+        example: 200
+        type: integer
+      headers:
+        example: 'Content-Type: application/json'
+        type: string
+      id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        example: POST
+        type: string
+      name:
+        example: API Login Test
+        type: string
+      updated_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      url:
+        example: https://api.example.com/login
+        type: string
+    type: object
   handlers.ChangePasswordRequest:
     properties:
       current_password:
@@ -29,6 +68,39 @@ definitions:
     required:
     - email
     - name
+    type: object
+  handlers.CreateTestSuiteRequest:
+    properties:
+      company_id:
+        type: string
+      expected_body:
+        type: string
+      expected_status:
+        maximum: 599
+        minimum: 100
+        type: integer
+      headers:
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        type: string
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      url:
+        type: string
+    required:
+    - company_id
+    - expected_status
+    - method
+    - name
+    - url
     type: object
   handlers.LoginRequest:
     properties:
@@ -87,12 +159,38 @@ definitions:
     properties:
       email:
         type: string
-      password:
-        minLength: 6
+      name:
+        maxLength: 100
+        minLength: 2
         type: string
       username:
         maxLength: 50
         minLength: 3
+        type: string
+    type: object
+  handlers.UpdateTestSuiteRequest:
+    properties:
+      expected_body:
+        type: string
+      expected_status:
+        maximum: 599
+        minimum: 100
+        type: integer
+      headers:
+        type: string
+      method:
+        enum:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - PATCH
+        type: string
+      name:
+        maxLength: 100
+        minLength: 3
+        type: string
+      url:
         type: string
     type: object
 host: localhost:8080
@@ -299,6 +397,41 @@ paths:
       summary: Criar nova empresa
       tags:
       - companies
+  /companies/{company_id}/test-suites:
+    get:
+      consumes:
+      - application/json
+      description: Retorna todas as suítes de teste de uma empresa específica
+      parameters:
+      - description: ID da empresa
+        in: path
+        name: company_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Suítes de teste da empresa
+          schema:
+            items:
+              $ref: '#/definitions/entities.TestSuite'
+            type: array
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Obter suítes de teste por empresa
+      tags:
+      - test-suites
   /companies/{id}:
     delete:
       consumes:
@@ -405,6 +538,182 @@ paths:
       summary: Atualizar empresa
       tags:
       - companies
+  /test-suites:
+    get:
+      consumes:
+      - application/json
+      description: Retorna uma lista paginada de suítes de teste
+      parameters:
+      - description: ID da empresa para filtrar
+        in: query
+        name: company_id
+        type: string
+      - default: 10
+        description: Limite de resultados
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset para paginação
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Lista de suítes de teste
+          schema:
+            items:
+              $ref: '#/definitions/entities.TestSuite'
+            type: array
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Listar suítes de teste
+      tags:
+      - test-suites
+    post:
+      consumes:
+      - application/json
+      description: Cria uma nova suíte de teste no sistema
+      parameters:
+      - description: Dados da suíte de teste
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.CreateTestSuiteRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Suíte de teste criada com sucesso
+          schema:
+            $ref: '#/definitions/entities.TestSuite'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Criar nova suíte de teste
+      tags:
+      - test-suites
+  /test-suites/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove uma suíte de teste do sistema
+      parameters:
+      - description: ID da suíte de teste
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Suíte de teste deletada com sucesso
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Deletar suíte de teste
+      tags:
+      - test-suites
+    get:
+      consumes:
+      - application/json
+      description: Retorna os dados de uma suíte de teste específica pelo ID
+      parameters:
+      - description: ID da suíte de teste
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Suíte de teste encontrada
+          schema:
+            $ref: '#/definitions/entities.TestSuite'
+        "400":
+          description: ID inválido
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Suíte de teste não encontrada
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Obter suíte de teste por ID
+      tags:
+      - test-suites
+    put:
+      consumes:
+      - application/json
+      description: Atualiza os dados de uma suíte de teste existente
+      parameters:
+      - description: ID da suíte de teste
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Dados para atualização
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.UpdateTestSuiteRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Suíte de teste atualizada com sucesso
+          schema:
+            $ref: '#/definitions/entities.TestSuite'
+        "400":
+          description: Dados inválidos
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Erro interno do servidor
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Atualizar suíte de teste
+      tags:
+      - test-suites
   /users:
     get:
       consumes:

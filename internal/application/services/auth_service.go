@@ -51,7 +51,16 @@ func (s *authService) Login(ctx context.Context, req *services.LoginRequest) (*s
 	}
 
 	return &services.LoginResponse{
-		Token:     token,
+		Token: token,
+		User: services.UserResponse{
+			ID:        user.ID,
+			Username:  user.Username,
+			Email:     user.Email,
+			Name:      user.Name,
+			CompanyID: user.CompanyID,
+			CreatedAt: user.CreatedAt,
+			UpdatedAt: user.UpdatedAt,
+		},
 		ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 	}, nil
 }
@@ -96,7 +105,7 @@ func (s *authService) Register(ctx context.Context, req *services.RegisterReques
 	}
 
 	return &services.RegisterResponse{
-		ID:       int64(createdUser.ID.ID()),
+		ID:       createdUser.ID,
 		Username: createdUser.Username,
 		Email:    createdUser.Email,
 	}, nil

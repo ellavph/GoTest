@@ -311,6 +311,60 @@ const docTemplate = `{
                 }
             }
         },
+        "/companies/{company_id}/test-suites": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retorna todas as suítes de teste de uma empresa específica",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Obter suítes de teste por empresa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da empresa",
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suítes de teste da empresa",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.TestSuite"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/companies/{id}": {
             "get": {
                 "security": [
@@ -450,6 +504,276 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "Empresa deletada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/test-suites": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retorna uma lista paginada de suítes de teste",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Listar suítes de teste",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da empresa para filtrar",
+                        "name": "company_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Limite de resultados",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 0,
+                        "description": "Offset para paginação",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de suítes de teste",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.TestSuite"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Cria uma nova suíte de teste no sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Criar nova suíte de teste",
+                "parameters": [
+                    {
+                        "description": "Dados da suíte de teste",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateTestSuiteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Suíte de teste criada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TestSuite"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
+        "/test-suites/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retorna os dados de uma suíte de teste específica pelo ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Obter suíte de teste por ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da suíte de teste",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suíte de teste encontrada",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TestSuite"
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Suíte de teste não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Atualiza os dados de uma suíte de teste existente",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Atualizar suíte de teste",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da suíte de teste",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados para atualização",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.UpdateTestSuiteRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suíte de teste atualizada com sucesso",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TestSuite"
+                        }
+                    },
+                    "400": {
+                        "description": "Dados inválidos",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Remove uma suíte de teste do sistema",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "test-suites"
+                ],
+                "summary": "Deletar suíte de teste",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da suíte de teste",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Suíte de teste deletada com sucesso",
                         "schema": {
                             "type": "object",
                             "additionalProperties": true
@@ -782,6 +1106,58 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "entities.TestSuite": {
+            "type": "object",
+            "properties": {
+                "company_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "expected_body": {
+                    "type": "string",
+                    "example": "{\"success\": true}"
+                },
+                "expected_status": {
+                    "type": "integer",
+                    "example": 200
+                },
+                "headers": {
+                    "type": "string",
+                    "example": "Content-Type: application/json"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH"
+                    ],
+                    "example": "POST"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "API Login Test"
+                },
+                "updated_at": {
+                    "type": "string",
+                    "example": "2023-01-01T00:00:00Z"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "https://api.example.com/login"
+                }
+            }
+        },
         "handlers.ChangePasswordRequest": {
             "type": "object",
             "required": [
@@ -821,6 +1197,50 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 20,
                     "minLength": 10
+                }
+            }
+        },
+        "handlers.CreateTestSuiteRequest": {
+            "type": "object",
+            "required": [
+                "company_id",
+                "expected_status",
+                "method",
+                "name",
+                "url"
+            ],
+            "properties": {
+                "company_id": {
+                    "type": "string"
+                },
+                "expected_body": {
+                    "type": "string"
+                },
+                "expected_status": {
+                    "type": "integer",
+                    "maximum": 599,
+                    "minimum": 100
+                },
+                "headers": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         },
@@ -905,14 +1325,49 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
-                "password": {
+                "name": {
                     "type": "string",
-                    "minLength": 6
+                    "maxLength": 100,
+                    "minLength": 2
                 },
                 "username": {
                     "type": "string",
                     "maxLength": 50,
                     "minLength": 3
+                }
+            }
+        },
+        "handlers.UpdateTestSuiteRequest": {
+            "type": "object",
+            "properties": {
+                "expected_body": {
+                    "type": "string"
+                },
+                "expected_status": {
+                    "type": "integer",
+                    "maximum": 599,
+                    "minimum": 100
+                },
+                "headers": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string",
+                    "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "DELETE",
+                        "PATCH"
+                    ]
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3
+                },
+                "url": {
+                    "type": "string"
                 }
             }
         }
