@@ -20,6 +20,7 @@ type UserReader interface {
 type UserWriter interface {
 	Update(ctx context.Context, id uuid.UUID, req *UpdateUserRequest) (*entities.User, error)
 	Delete(ctx context.Context, id uuid.UUID) error
+	LinkCompany(ctx context.Context, userID, companyID uuid.UUID) error
 }
 
 // PasswordManager define operações de gerenciamento de senha

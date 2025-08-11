@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"TestGO/internal/interfaces/http/handlers"
 	"TestGO/internal/interfaces/http/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SetupUserRoutes configura as rotas de usuário
@@ -17,5 +18,6 @@ func SetupUserRoutes(router *gin.RouterGroup, userHandler *handlers.UserHandler,
 		users.PUT("/password", userHandler.ChangePassword)
 		users.GET("", userHandler.ListUsers)
 		users.GET("/:id", userHandler.GetUserByID)
+		users.POST("/link-company", userHandler.LinkCompany)
 	}
 }

@@ -3,8 +3,9 @@ package services
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"TestGO/internal/domain/entities"
+
+	"github.com/google/uuid"
 )
 
 // CompanyReader define operações de leitura de empresas

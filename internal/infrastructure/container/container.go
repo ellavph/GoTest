@@ -3,14 +3,15 @@ package container
 import (
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"TestGO/internal/application/services"
 	"TestGO/internal/domain/repositories"
-	interfaceServices "TestGO/internal/interfaces/services"
 	sqlRepo "TestGO/internal/infrastructure/database/sql"
 	"TestGO/internal/infrastructure/security"
 	"TestGO/internal/interfaces/http/handlers"
 	"TestGO/internal/interfaces/http/middleware"
+	interfaceServices "TestGO/internal/interfaces/services"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 // Container gerencia todas as dependências da aplicação
@@ -63,7 +64,7 @@ func NewContainer(db *pgxpool.Pool, jwtSecret string) *Container {
 
 	// Handlers
 	authHandler := handlers.NewAuthHandler(authService)
-	userHandler := handlers.NewUserHandler(userService)
+	userHandler := handlers.NewUserHandler(userService, companyService)
 	companyHandler := handlers.NewCompanyHandler(companyService)
 	testSuiteHandler := handlers.NewTestSuiteHandler(testSuiteService)
 

@@ -1,9 +1,10 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"TestGO/internal/interfaces/http/handlers"
 	"TestGO/internal/interfaces/http/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SetupCompanyRoutes configura as rotas de empresa

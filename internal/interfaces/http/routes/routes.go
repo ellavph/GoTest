@@ -30,6 +30,8 @@ func SetupRoutes(router *gin.Engine, container *container.Container) {
 			userRoutes.POST("/change-password", container.UserHandler.ChangePassword)
 			userRoutes.GET("", container.UserHandler.ListUsers)
 			userRoutes.GET("/:id", container.UserHandler.GetUserByID)
+			userRoutes.POST("/link-company", container.UserHandler.LinkCompany)
+
 		}
 
 		// Rotas de empresa

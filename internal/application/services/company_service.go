@@ -4,10 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"TestGO/internal/domain/entities"
 	"TestGO/internal/domain/repositories"
 	"TestGO/internal/interfaces/services"
+
+	"github.com/google/uuid"
 )
 
 type companyService struct {

@@ -3,7 +3,9 @@
 CREATE TABLE "companies" (
   "id" uuid NOT NULL,
   "name" text,
-  "location" text,
+  "email" text,
+  "phone" text,
+  "address" text,
   "created_at" timestamp,
   "updated_at" timestamp,
   PRIMARY KEY ("id")

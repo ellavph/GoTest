@@ -12,14 +12,16 @@ import (
 )
 
 type UserHandler struct {
-	userService services.UserService
-	validator   *validator.Validate
+	userService    services.UserService
+	companyService services.CompanyService
+	validator      *validator.Validate
 }
 
-func NewUserHandler(userService services.UserService) *UserHandler {
+func NewUserHandler(userService services.UserService, companyService services.CompanyService) *UserHandler {
 	return &UserHandler{
-		userService: userService,
-		validator:   validator.New(),
+		userService:    userService,
+		companyService: companyService,
+		validator:      validator.New(),
 	}
 }
 
@@ -53,11 +55,13 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	id, ok := userID.(uuid.UUID)
+	uuidPtr, ok := userID.(*uuid.UUID)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID"})
 		return
 	}
+
+	id := *uuidPtr
 
 	user, err := h.userService.GetByID(c.Request.Context(), id)
 	if err != nil {
@@ -67,9 +71,10 @@ func (h *UserHandler) GetProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"user": gin.H{
-			"id":       user.ID,
-			"username": user.Username,
-			"email":    user.Email,
+			"id":        user.ID,
+			"username":  user.Username,
+			"email":     user.Email,
+			"companyId": user.CompanyID,
 		},
 	})
 }
@@ -288,5 +293,75 @@ func (h *UserHandler) GetUserByID(c *gin.Context) {
 			"username": user.Username,
 			"email":    user.Email,
 		},
+	})
+}
+
+type LinkCompanyRequest struct {
+	CompanyID string `json:"company_id" binding:"required"`
+}
+
+// LinkCompany godoc
+// @Summary Vincular empresa ao usuário logado
+// @Description Vincula uma empresa específica ao usuário atualmente autenticado
+// @Tags users
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param company_id path string true "ID da empresa"
+// @Success 200 {object} map[string]interface{} "Empresa vinculada com sucesso"
+// @Failure 400 {object} map[string]interface{} "ID inválido ou usuário já vinculado"
+// @Failure 404 {object} map[string]interface{} "Empresa não encontrada"
+// @Failure 500 {object} map[string]interface{} "Erro interno do servidor"
+// @Router /users/link-company/{company_id} [post]
+func (h *UserHandler) LinkCompany(c *gin.Context) {
+	// Obter o ID da empresa do parâmetro da URL
+	var req LinkCompanyRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	companyID, err := uuid.Parse(req.CompanyID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid company ID"})
+		return
+	}
+
+	// Obter o ID do usuário logado do contexto (setado pelo middleware de auth)
+	userIDInterface, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
+		return
+	}
+
+	userIDPtr, ok := userIDInterface.(*uuid.UUID)
+	if !ok || userIDPtr == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user ID format"})
+		return
+	}
+
+	userID := *userIDPtr
+
+	// Verificar se a empresa existe
+	company, err := h.companyService.GetByID(c.Request.Context(), companyID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Company not found"})
+		return
+	}
+
+	// Vincular a empresa ao usuário
+	err = h.userService.LinkCompany(c.Request.Context(), userID, companyID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Company linked successfully to user",
+		"company": gin.H{
+			"id":   company.ID,
+			"name": company.Name,
+		},
+		"user_id": userID,
 	})
 }

@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/google/uuid"
 	"TestGO/internal/domain/entities"
 	"TestGO/internal/domain/repositories"
-	"TestGO/internal/interfaces/services"
 	"TestGO/internal/infrastructure/security"
+	"TestGO/internal/interfaces/services"
+
+	"github.com/google/uuid"
 )
 
 type userService struct {
@@ -177,6 +178,31 @@ func (s *userService) ChangePassword(ctx context.Context, id uuid.UUID, req *ser
 	err = s.userRepo.Update(ctx, user)
 	if err != nil {
 		return fmt.Errorf("failed to update password: %w", err)
+	}
+
+	return nil
+}
+
+// LinkCompany vincula uma empresa a um usuário
+func (s *userService) LinkCompany(ctx context.Context, userID, companyID uuid.UUID) error {
+	// Buscar usuário
+	user, err := s.userRepo.GetByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("user not found: %w", err)
+	}
+
+	// Verificar se o usuário já está vinculado a uma empresa
+	if user.CompanyID != nil {
+		return fmt.Errorf("user is already linked to a company")
+	}
+
+	// Atualizar o CompanyID do usuário
+	user.CompanyID = &companyID
+
+	// Salvar no banco
+	err = s.userRepo.Update(ctx, user)
+	if err != nil {
+		return fmt.Errorf("failed to link company to user: %w", err)
 	}
 
 	return nil

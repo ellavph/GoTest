@@ -902,6 +902,65 @@ const docTemplate = `{
                 }
             }
         },
+        "/users/link-company/{company_id}": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Vincula uma empresa específica ao usuário atualmente autenticado",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Vincular empresa ao usuário logado",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID da empresa",
+                        "name": "company_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Empresa vinculada com sucesso",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "400": {
+                        "description": "ID inválido ou usuário já vinculado",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Empresa não encontrada",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "500": {
+                        "description": "Erro interno do servidor",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    }
+                }
+            }
+        },
         "/users/profile": {
             "get": {
                 "security": [
